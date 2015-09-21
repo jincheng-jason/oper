@@ -1,0 +1,105 @@
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">-->
+<!--<mapper namespace="EventMapper">-->
+
+
+    <!--&lt;!&ndash; 新增&ndash;&gt;-->
+    <!--<insert id="save" parameterType="pd">-->
+        <!--insert into EVENT(-->
+        <!--TITLE,-->
+        <!--URL,-->
+        <!--IMG,-->
+        <!--BEGIN_AT,-->
+        <!--END_AT-->
+        <!--) values (-->
+        <!--#{TITLE},-->
+        <!--#{URL},-->
+        <!--#{IMG},-->
+        <!--#{BEGIN_AT},-->
+        <!--#{END_AT}-->
+        <!--)-->
+    <!--</insert>-->
+
+    <!---->
+
+
+    <!--&lt;!&ndash; 删除&ndash;&gt;-->
+    <!--<delete id="delete" parameterType="pd">-->
+        <!--delete from EVENT-->
+        <!--where-->
+        <!--ID = #{ID}-->
+    <!--</delete>-->
+
+
+    <!--&lt;!&ndash; 修改 &ndash;&gt;-->
+    <!--<update id="edit" parameterType="pd">-->
+        <!--update  EVENT-->
+        <!--set-->
+        <!--TITLE = #{TITLE},-->
+        <!--URL = #{URL},-->
+        <!--IMG = #{IMG},-->
+        <!--BEGIN_AT = #{BEGIN_AT},-->
+        <!--END_AT = #{END_AT},-->
+        <!--ID = ID-->
+        <!--where-->
+        <!--ID = #{ID}-->
+    <!--</update>-->
+
+
+    <!--&lt;!&ndash; 通过ID获取数据 &ndash;&gt;-->
+    <!--<select id="findById" parameterType="pd" resultType="pd">-->
+        <!--select-->
+        <!--TITLE,-->
+        <!--URL,-->
+        <!--IMG,-->
+        <!--BEGIN_AT,-->
+        <!--END_AT,-->
+        <!--ID-->
+        <!--from-->
+        <!--EVENT-->
+        <!--where-->
+        <!--ID = #{ID}-->
+    <!--</select>-->
+
+
+    <!--&lt;!&ndash; 热门推荐列表 &ndash;&gt;-->
+    <!--<select id="datalistPage" parameterType="page" resultType="pd">-->
+        <!--select-->
+        <!--a.TITLE,-->
+        <!--a.URL,-->
+        <!--a.IMG,-->
+        <!--a.BEGIN_AT,-->
+        <!--a.END_AT,-->
+        <!--a.ID-->
+        <!--from-->
+        <!--EVENT a-->
+        <!--order by-->
+        <!--a.BEGIN_AT desc-->
+    <!--</select>-->
+
+
+
+    <!--&lt;!&ndash; 列表(全部) &ndash;&gt;-->
+    <!--<select id="listAll" parameterType="pd" resultType="pd">-->
+        <!--select-->
+        <!--a.TITLE,-->
+        <!--a.URL,-->
+        <!--a.IMG,-->
+        <!--a.BEGIN_AT,-->
+        <!--a.END_AT,-->
+        <!--a.ID-->
+        <!--from-->
+        <!--EVENT a-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash; 批量删除 &ndash;&gt;-->
+    <!--<delete id="deleteAll" parameterType="String">-->
+        <!--delete from EVENT-->
+        <!--where-->
+        <!--ID in-->
+        <!--<foreach item="item" index="index" collection="array" open="(" separator="," close=")">-->
+            <!--#{item}-->
+        <!--</foreach>-->
+    <!--</delete>-->
+
+<!--</mapper>-->

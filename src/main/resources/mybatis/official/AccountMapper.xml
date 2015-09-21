@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AccountMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into ACCOUNT(
+			OPEN_ID,
+			ACCOUNT_NAME,
+			ACCOUNT,	
+			INFO,
+			IMG,
+			QRIMG,
+            SPIDER_URL,
+			SN
+		) values (
+			#{OPEN_ID},	
+			#{ACCOUNT_NAME},	
+			#{ACCOUNT},	
+			#{INFO},
+			#{IMG},
+			#{QRIMG},
+			#{SPIDER_URL},
+			#{SN}
+		)
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from ACCOUNT
+		where 
+			ID = #{ID}
+	</delete>
+
+
+    <update id="updateCommend" parameterType="pd">
+        update  ACCOUNT
+          set
+            IS_COMMENDED=${flag}
+          where
+            ID = #{id}
+    </update>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  ACCOUNT
+			set 
+				ACCOUNT_NAME = #{ACCOUNT_NAME},
+				IMG = #{IMG},
+				SPIDER_URL = #{SPIDER_URL},
+			    ID = ID
+			where 
+				ID = #{ID}
+	</update>
+	
+	<!-- 批量修改 -->
+	<update id="batchUpdate" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
+			update  ACCOUNT 
+				set
+					OPEN_ID = '${item.OPEN_ID}',
+					ACCOUNT_NAME = '${item.ACCOUNT_NAME}',
+					ACCOUNT = '${item.ACCOUNT}',
+					INFO = '${item.INFO}',
+					QRIMG = '${item.QRIMG}',
+                    SPIDER_URL = '${SPIDER_URL}',
+				    ID = ID
+				where 
+                    ID = '${item.ID}'
+		</foreach>
+	</update>
+	
+	<select id="count" resultType="java.lang.Integer">
+		select count(*) from ACCOUNT
+	</select>
+
+    <select id="findByName" parameterType="String" resultType="pd">
+        select
+            OPEN_ID,
+			ACCOUNT_NAME,
+			ACCOUNT,
+			INFO,
+			IMG,
+			QRIMG,
+            SPIDER_URL,
+            ORIGIN_IMG,
+			ID
+        from
+          ACCOUNT
+        where
+          ACCOUNT_NAME = #{ACCOUNT_NAME}
+    </select>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			OPEN_ID,
+			ACCOUNT_NAME,
+			ACCOUNT,	
+			INFO,
+			IMG,
+			QRIMG,
+            SPIDER_URL,
+			ID
+		from 
+			ACCOUNT
+		where 
+			ID = #{ID}
+	</select>
+	
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.OPEN_ID,
+				a.ACCOUNT_NAME,
+				a.ACCOUNT,	
+				a.INFO,
+				a.IMG,
+				a.QRIMG,
+                a.IS_COMMENDED,
+                a.SPIDER_URL,
+				a.ID
+		from 
+				ACCOUNT a
+        where 1=1
+        <if test="searchBeginAt!=null and searchBeginAt!=''">
+            and a.create_time &gt;= #{searchBeginAt}
+        </if>
+        <if test="searchEndAt!=null and searchEndAt!=''">
+            and a.create_time &lt;= #{searchEndAt}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            and (a.ACCOUNT_NAME like CONCAT('%','${keyword}','%' )
+            or a.ACCOUNT like CONCAT('%','${keyword}','%' ))
+        </if>
+		order by
+				a.ID desc
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.OPEN_ID,
+				a.ACCOUNT_NAME,
+				a.ACCOUNT,	
+				a.INFO,
+				a.IMG,
+				a.QRIMG,
+				a.SPIDER_URL,
+				a.ID
+		from 
+				ACCOUNT a
+		order by
+				a.SN
+	</select>
+	
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from ACCOUNT
+		where 
+			ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+</mapper>

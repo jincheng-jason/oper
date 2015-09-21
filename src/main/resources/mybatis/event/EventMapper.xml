@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="EventMapper">
+
+
+    <!-- 新增-->
+    <insert id="save" parameterType="pd">
+		insert into EVENT(
+			title,	
+			url,	
+			img,	
+			large_img,	
+			small_img,	
+			status,	
+			begin_at,	
+			end_at,	
+			apply_count,	
+			id
+		) values (
+			#{title},	
+			#{url},	
+			#{img},	
+			#{large_img},	
+			#{small_img},	
+			#{status},	
+			#{begin_at},	
+			#{end_at},	
+			#{apply_count},	
+			#{id}
+		)
+	</insert>
+
+
+    <!-- 删除-->
+    <delete id="delete" parameterType="pd">
+		delete from EVENT
+		where 
+			id = #{id}
+	</delete>
+
+
+    <!-- 修改 -->
+    <update id="edit" parameterType="pd">
+		update  EVENT
+			set 
+				title = #{title},
+				url = #{url},
+				begin_at = #{begin_at},
+				end_at = #{end_at},
+			id = id
+			where 
+				id = #{id}
+	</update>
+
+    <update id="updateRemark" parameterType="pd">
+        update user_apply_event
+            set
+                remark = #{remark}
+            WHERE
+                id = #{id}
+    </update>
+
+    <update id="onlineAll" parameterType="pd">
+        update EVENT
+        set
+        status = #{status}
+        where
+        id in
+        <foreach item="item" index="index" collection="DATA_IDS" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+
+    <!-- 通过ID获取数据 -->
+    <select id="findById" parameterType="pd" resultType="pd">
+		select 
+			title,	
+			url,	
+			img,	
+			large_img,	
+			small_img,	
+			status,	
+			begin_at,	
+			end_at,	
+			apply_count,	
+			id
+		from 
+			EVENT
+		where 
+			id = #{id}
+	</select>
+
+    <select id="findApply" parameterType="pd" resultType="pd">
+        SELECT
+            a.id,a.user_name,a.gender,a.phone_num,a.profession,a.remark,b.title,b.url,b.img,b.begin_at,b.end_at,b.apply_count
+        FROM
+            user_apply_event a
+        LEFT JOIN EVENT b ON a.event_id = b.id
+        where 1=1
+        <if test="searchBeginAt!=null and searchBeginAt!=''">
+            and b.begin_at &gt;= #{searchBeginAt}
+        </if>
+        <if test="searchEndAt!=null and searchEndAt!=''">
+            and b.end_at &lt;= #{searchEndAt}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            and (a.user_name like CONCAT('%','${keyword}','%' )
+            or b.title like CONCAT('%','${keyword}','%' )
+            or a.remark like CONCAT('%','${keyword}','%' ))
+        </if>
+        order by b.begin_at desc
+    </select>
+
+
+    <!-- 列表 -->
+    <select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.title,	
+				a.url,	
+				a.img,	
+				a.large_img,	
+				a.small_img,	
+				a.status,	
+				a.begin_at,	
+				a.end_at,	
+				a.apply_count,	
+				a.id
+		from 
+				EVENT a
+        where
+                a.status &lt;&gt; 1
+        <if test="searchBeginAt!=null and searchBeginAt!=''">
+            and a.begin_at &gt;= #{searchBeginAt}
+        </if>
+        <if test="searchEndAt!=null and searchEndAt!=''">
+            and a.end_at &lt;= #{searchEndAt}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            and a.title like CONCAT('%','${keyword}','%' )
+        </if>
+        order by a.begin_at desc
+	</select>
+
+
+    <select id="listLasting" parameterType="page" resultType="pd">
+        select
+        a.title,
+        a.url,
+        a.img,
+        a.large_img,
+        a.small_img,
+        a.status,
+        a.begin_at,
+        a.end_at,
+        a.apply_count,
+        a.id
+        from
+        EVENT a
+        where
+        a.status = 1
+        and
+        a.begin_at &lt;= now() and a.end_at &gt;= now()
+        <if test="keyword!=null and keyword!=''">
+            and a.title like CONCAT('%','${keyword}','%' )
+        </if>
+        order by a.begin_at desc
+    </select>
+
+    <select id="listOver" parameterType="page" resultType="pd">
+        select
+        a.title,
+        a.url,
+        a.img,
+        a.large_img,
+        a.small_img,
+        a.status,
+        a.begin_at,
+        a.end_at,
+        a.apply_count,
+        a.id
+        from
+        EVENT a
+        where
+        a.status = 1
+        and
+        a.end_at &lt;= now()
+        <if test="keyword!=null and keyword!=''">
+            and a.title like CONCAT('%','${keyword}','%' )
+        </if>
+        order by a.begin_at desc
+    </select>
+
+    <!-- 列表(全部) -->
+    <select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.title,	
+				a.url,	
+				a.img,	
+				a.large_img,	
+				a.small_img,	
+				a.status,	
+				a.begin_at,	
+				a.end_at,	
+				a.apply_count,	
+				a.id
+		from 
+				EVENT a
+	</select>
+
+    <!-- 批量删除 -->
+    <delete id="deleteAll" parameterType="String">
+        delete from EVENT
+        where
+        id in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+</mapper>

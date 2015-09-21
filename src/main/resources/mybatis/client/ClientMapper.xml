@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClientMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into user(
+			phone_num,
+			password,	
+			avata,	
+			nick_name,
+			weibo,	
+			weixin,	
+			append,	
+			cloud_id,
+			create_time
+		) values (
+			#{phone_num},
+			#{password},	
+			#{avata},	
+			#{nick_name},
+			#{weibo},	
+			#{weixin},	
+			#{append},	
+			#{cloud_id},
+			#{createTime}
+		)
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from user
+		where 
+			ID = #{ID}
+	</delete>
+	
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  user
+			set 
+				phone_num = #{phone_num},
+				password = #{password},
+				avata = #{avata},
+				nick_name = #{nick_name},
+				weibo = #{weibo},
+				weixin = #{weixin},
+				append = #{append},
+				cloud_id = #{cloud_id},
+				create_time = #{createTime},
+			ID = ID
+			where 
+				ID = #{ID}
+	</update>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			phone_num,
+			password,	
+			avata,	
+			nick_name,
+			weibo,	
+			weixin,	
+			append,	
+			cloud_id,
+			create_time,
+			ID
+		from 
+			user
+		where 
+			ID = #{ID}
+	</select>
+	
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.phone_num,
+				a.password,	
+				a.avata,	
+				a.nick_name,
+				a.weibo,	
+				a.weixin,	
+				a.append,	
+				a.cloud_id,
+				a.create_time,
+				a.ID
+		from 
+				user a
+        where 1=1
+        <if test="searchBeginAt!=null and searchBeginAt!=''">
+            and a.create_time &gt;= #{searchBeginAt}
+        </if>
+        <if test="searchEndAt!=null and searchEndAt!=''">
+            and a.create_time &lt;= #{searchEndAt}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            and (a.nick_name like CONCAT('%','${keyword}','%' )
+            or a.weibo like CONCAT('%','${keyword}','%' )
+            or a.weixin like CONCAT('%','${keyword}','%' )
+            or a.phone_num like CONCAT('%','${keyword}','%' ))
+        </if>
+        order by a.create_time desc
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.phone_num,
+				a.password,	
+				a.avata,	
+				a.nick_name,
+				a.weibo,	
+				a.weixin,	
+				a.append,	
+				a.cloud_id,
+				a.create_time,
+				a.ID
+		from 
+				user a
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from user
+		where 
+			ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+</mapper>

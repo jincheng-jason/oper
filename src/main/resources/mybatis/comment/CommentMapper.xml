@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CommentMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into comment(
+			article_id,	
+			article_title,	
+			content,	
+			user_id,	
+			user_name,	
+			like_count,	
+			id
+		) values (
+			#{article_id},	
+			#{article_title},	
+			#{content},	
+			#{user_id},	
+			#{user_name},	
+			#{like_count},	
+			#{id}
+		)
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from comment
+		where 
+			id = #{id}
+	</delete>
+	
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  comment
+			set 
+				content = #{content},
+			id = id
+			where 
+				id = #{id}
+	</update>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			article_id,	
+			article_title,	
+			content,	
+			user_id,	
+			user_name,	
+			like_count,	
+			id
+		from 
+			comment
+		where 
+			id = #{id}
+	</select>
+	
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.article_id,	
+				a.content,
+				a.user_id,	
+				a.like_count,
+				a.id,
+				b.title as article_title,
+				c.nick_name as user_name
+		from 
+				comment a
+        left join article b on a.article_id = b.id
+        left join user c on c.id = a.user_id
+        order by a.create_time desc
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.article_id,	
+				a.article_title,	
+				a.content,	
+				a.user_id,	
+				a.user_name,	
+				a.like_count,	
+				a.id
+		from 
+				comment a
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from comment
+		where 
+			id in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+</mapper>

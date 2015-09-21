@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ArticleMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into ARTICLE(
+			TITLE,	
+			URL,	
+			IMG_LINK,
+			HEAD_IMAGE,
+			ACCOUNT_NAME,
+			CONTENT168,
+			CATEGORY_ID,
+			PUB_DATE,
+            STATUS,
+            LARGE_IMG,
+            SMALL_IMG,
+            ACCOUNT_ID
+		) values (
+			#{TITLE},	
+			#{URL},	
+			#{IMG_LINK},	
+			#{HEAD_IMAGE},	
+			#{ACCOUNT_NAME},	
+			#{CONTENT168},
+			#{CATEGORY_ID},
+			#{PUB_DATE},
+			#{STATUS},
+			#{LARGE_IMG},
+			#{SMALL_IMG},
+			#{ACCOUNT_ID}
+		)
+	</insert>
+	
+	<!-- 批量新增-->
+	<insert id="batchSave" parameterType="java.util.List">
+		insert into ARTICLE(
+			TITLE,	
+			URL,
+            IMG_LINK,
+            HEAD_IMAGE,
+            ACCOUNT_NAME,
+			CONTENT168,	
+			PUB_DATE,	
+			LAST_MODIFIED,
+			ID
+		) values 
+		<foreach collection="list" item="pd" index="index" separator="," >
+		(
+			#{pd.TITLE},	
+			#{pd.URL},	
+			#{pd.IMG_LINK},	
+			#{pd.HEAD_IMAGE},	
+			#{pd.ACCOUNT_NAME},	
+			#{pd.CONTENT168},	
+			#{pd.PUB_DATE},	
+			#{pd.LAST_MODIFIED},	
+			#{pd.ID}
+		)
+		</foreach> 
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from ARTICLE
+		where 
+			ID = #{ID}
+	</delete>
+	
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  ARTICLE
+			set 
+				TITLE = #{TITLE},
+				URL = #{URL},
+				IMG_LINK = #{IMG_LINK},
+				HEAD_IMAGE = #{HEAD_IMAGE},
+				ACCOUNT_NAME = #{ACCOUNT_NAME},
+				CONTENT168 = #{CONTENT168},
+				PUB_DATE = #{PUB_DATE},
+				LAST_MODIFIED = #{LAST_MODIFIED},
+			    ID = ID
+			where 
+				ID = #{ID}
+	</update>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			TITLE,	
+			URL,	
+			IMG_LINK,
+			HEAD_IMAGE,
+			ACCOUNT_NAME,
+			CONTENT168,	
+			PUB_DATE,	
+			LAST_MODIFIED,	
+			ID
+		from 
+			ARTICLE
+		where 
+			ID = #{ID}
+	</select>
+
+    <!-- 未上线文章列表 -->
+    <select id="offlinelistPage" parameterType="page" resultType="pd">
+        select
+        a.TITLE,
+        a.URL,
+        a.IMG_LINK,
+        a.HEAD_IMAGE,
+        a.ACCOUNT_NAME,
+        a.CONTENT168,
+        a.PUB_DATE,
+        a.LAST_MODIFIED,
+        a.ID
+        from
+        ARTICLE a
+        where
+        a.category_id = 0
+        and
+        a.status = 0
+        <if test="searchBeginAt!=null and searchBeginAt!=''">
+            and a.PUB_DATE &gt;= #{searchBeginAt}
+        </if>
+        <if test="searchEndAt!=null and searchEndAt!=''">
+            and a.PUB_DATE &lt;= #{searchEndAt}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            and (a.TITLE like CONCAT('%','${keyword}','%' )
+            or a.ACCOUNT_NAME like CONCAT('%','${keyword}','%' ))
+        </if>
+        order by
+        a.PUB_DATE desc
+    </select>
+	
+	<!-- 热门推荐列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.TITLE,	
+				a.URL,	
+				a.IMG_LINK,
+				a.HEAD_IMAGE,
+				a.ACCOUNT_NAME,
+				a.CONTENT168,	
+				a.PUB_DATE,	
+				a.LAST_MODIFIED,
+				a.IS_CHIEF,
+				a.ID
+		from 
+				ARTICLE a
+        where
+                a.category_id = 1
+        and
+                a.status = 1
+        <if test="searchBeginAt!=null and searchBeginAt!=''">
+            and a.PUB_DATE &gt;= #{searchBeginAt}
+        </if>
+        <if test="searchEndAt!=null and searchEndAt!=''">
+            and a.PUB_DATE &lt;= #{searchEndAt}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            and (a.TITLE like CONCAT('%','${keyword}','%' )
+            or a.ACCOUNT_NAME like CONCAT('%','${keyword}','%' ))
+        </if>
+        order by
+                a.PUB_DATE desc
+	</select>
+
+    <!-- 行业动态列表 -->
+    <select id="newslistPage" parameterType="page" resultType="pd">
+        select
+        a.TITLE,
+        a.URL,
+        a.IMG_LINK,
+--         a.HEAD_IMAGE,
+--         a.ACCOUNT_NAME,
+--         a.CONTENT168,
+        a.PUB_DATE,
+        a.LAST_MODIFIED,
+        a.IS_CHIEF,
+        a.ID
+        from
+        ARTICLE a
+        where
+        a.category_id = 2
+        and
+                a.status = 1
+        <if test="searchBeginAt!=null and searchBeginAt!=''">
+            and a.PUB_DATE &gt;= #{searchBeginAt}
+        </if>
+        <if test="searchEndAt!=null and searchEndAt!=''">
+            and a.PUB_DATE &lt;= #{searchEndAt}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            and a.TITLE like CONCAT('%','${keyword}','%' )
+        </if>
+        order by
+                a.PUB_DATE desc
+    </select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.TITLE,	
+				a.URL,	
+				a.IMG_LINK,
+				a.HEAD_IMAGE,
+				a.ACCOUNT_NAME,
+				a.CONTENT168,	
+				a.PUB_DATE,	
+				a.LAST_MODIFIED,
+				a.ID
+		from 
+				ARTICLE a
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from ARTICLE
+		where 
+			ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+
+    <update id="updateChief" parameterType="pd">
+        update  ARTICLE
+          set
+            IS_CHIEF=${flag}
+          where
+            ID = #{id}
+    </update>
+
+    <update id="onlineAll" parameterType="pd">
+        update  ARTICLE
+			set
+                category_id = #{CATEGORY_ID},
+                STATUS = #{STATUS}
+			where
+                ID in
+                <foreach item="item" index="index" collection="DATA_IDS" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+    </update>
+
+
+	
+</mapper>
